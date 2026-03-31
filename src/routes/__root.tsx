@@ -1,4 +1,5 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { Sidebar } from "@/components/layout/sidebar";
 import "@/styles/globals.css";
 
 export const Route = createRootRoute({
@@ -9,8 +10,8 @@ export const Route = createRootRoute({
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
-      { title: "syncMind Skills" },
-      { name: "description", content: "syncMind Skills Platform" },
+      { title: "CRM 系统 - B2B 销售管理" },
+      { name: "description", content: "B2B Sales CRM System" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -21,7 +22,7 @@ export const Route = createRootRoute({
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -30,12 +31,15 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased" style={{ fontFamily: "'Noto Serif SC', 'Playfair Display', system-ui, sans-serif" }}>
-        <Outlet />
+      <body className="antialiased min-h-screen bg-background" style={{ fontFamily: "'Noto Sans SC', system-ui, sans-serif" }}>
+        <Sidebar />
+        <main className="ml-60 min-h-screen">
+          <Outlet />
+        </main>
         <Scripts />
         <NavBridgeScript />
       </body>

@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PreviewIndexRouteImport } from './routes/preview/index'
+import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities/index'
+import { Route as FollowupsIndexRouteImport } from './routes/followups/index'
 import { Route as CustomersIndexRouteImport } from './routes/customers/index'
 import { Route as PreviewListPageRouteImport } from './routes/preview/list-page'
 import { Route as PreviewDashboardRouteImport } from './routes/preview/dashboard'
@@ -23,6 +25,16 @@ const IndexRoute = IndexRouteImport.update({
 const PreviewIndexRoute = PreviewIndexRouteImport.update({
   id: '/preview/',
   path: '/preview/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpportunitiesIndexRoute = OpportunitiesIndexRouteImport.update({
+  id: '/opportunities/',
+  path: '/opportunities/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FollowupsIndexRoute = FollowupsIndexRouteImport.update({
+  id: '/followups/',
+  path: '/followups/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomersIndexRoute = CustomersIndexRouteImport.update({
@@ -46,6 +58,8 @@ export interface FileRoutesByFullPath {
   '/preview/dashboard': typeof PreviewDashboardRoute
   '/preview/list-page': typeof PreviewListPageRoute
   '/customers/': typeof CustomersIndexRoute
+  '/followups/': typeof FollowupsIndexRoute
+  '/opportunities/': typeof OpportunitiesIndexRoute
   '/preview/': typeof PreviewIndexRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +67,8 @@ export interface FileRoutesByTo {
   '/preview/dashboard': typeof PreviewDashboardRoute
   '/preview/list-page': typeof PreviewListPageRoute
   '/customers': typeof CustomersIndexRoute
+  '/followups': typeof FollowupsIndexRoute
+  '/opportunities': typeof OpportunitiesIndexRoute
   '/preview': typeof PreviewIndexRoute
 }
 export interface FileRoutesById {
@@ -61,6 +77,8 @@ export interface FileRoutesById {
   '/preview/dashboard': typeof PreviewDashboardRoute
   '/preview/list-page': typeof PreviewListPageRoute
   '/customers/': typeof CustomersIndexRoute
+  '/followups/': typeof FollowupsIndexRoute
+  '/opportunities/': typeof OpportunitiesIndexRoute
   '/preview/': typeof PreviewIndexRoute
 }
 export interface FileRouteTypes {
@@ -70,6 +88,8 @@ export interface FileRouteTypes {
     | '/preview/dashboard'
     | '/preview/list-page'
     | '/customers/'
+    | '/followups/'
+    | '/opportunities/'
     | '/preview/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -77,6 +97,8 @@ export interface FileRouteTypes {
     | '/preview/dashboard'
     | '/preview/list-page'
     | '/customers'
+    | '/followups'
+    | '/opportunities'
     | '/preview'
   id:
     | '__root__'
@@ -84,6 +106,8 @@ export interface FileRouteTypes {
     | '/preview/dashboard'
     | '/preview/list-page'
     | '/customers/'
+    | '/followups/'
+    | '/opportunities/'
     | '/preview/'
   fileRoutesById: FileRoutesById
 }
@@ -92,6 +116,8 @@ export interface RootRouteChildren {
   PreviewDashboardRoute: typeof PreviewDashboardRoute
   PreviewListPageRoute: typeof PreviewListPageRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
+  FollowupsIndexRoute: typeof FollowupsIndexRoute
+  OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
   PreviewIndexRoute: typeof PreviewIndexRoute
 }
 
@@ -109,6 +135,20 @@ declare module '@tanstack/react-router' {
       path: '/preview'
       fullPath: '/preview/'
       preLoaderRoute: typeof PreviewIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/opportunities/': {
+      id: '/opportunities/'
+      path: '/opportunities'
+      fullPath: '/opportunities/'
+      preLoaderRoute: typeof OpportunitiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/followups/': {
+      id: '/followups/'
+      path: '/followups'
+      fullPath: '/followups/'
+      preLoaderRoute: typeof FollowupsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/customers/': {
@@ -140,6 +180,8 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewDashboardRoute: PreviewDashboardRoute,
   PreviewListPageRoute: PreviewListPageRoute,
   CustomersIndexRoute: CustomersIndexRoute,
+  FollowupsIndexRoute: FollowupsIndexRoute,
+  OpportunitiesIndexRoute: OpportunitiesIndexRoute,
   PreviewIndexRoute: PreviewIndexRoute,
 }
 export const routeTree = rootRouteImport

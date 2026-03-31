@@ -10,28 +10,36 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { customersMock } from "@/mock/customers";
+import { followupsMock } from "@/mock/followups";
 
 const PAGE_SIZE = 10;
 
-export const Route = createFileRoute("/customers/")({
-  component: CustomersPage,
+const typeColors: Record<string, "default" | "secondary" | "outline"> = {
+  "拜访": "default",
+  "电话": "secondary",
+  "会议": "outline",
+  "线上沟通": "outline",
+  "其他": "outline",
+};
+
+export const Route = createFileRoute("/followups/")({
+  component: FollowupsPage,
 });
 
-function CustomersPage() {
-  const [statusFilter, setStatusFilter] = useState<string>("全部");
-  const [industryFilter, setIndustryFilter] = useState<string>("全部");
+function FollowupsPage() {
+  const [typeFilter, setTypeFilter] = useState<string>("全部");
+  const [customerFilter, setCustomerFilter] = useState<string>("全部");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const industries = ["全部", ...Array.from(new Set(customersMock.map((c) => c.industry)))];
-  const statuses = ["全部", "潜在", "跟进中", "成交", "流失"];
+  const customers = ["全部", ...Array.from(new Set(followupsMock.map((f) => f.customerName)))];
+  const types = ["全部", "拜访", "电话", "会议", "线上沟通", "其他"];
 
-  const filteredData = customersMock.filter((customer) => {
-    const matchStatus = statusFilter === "全部" || customer.status === statusFilter;
-    const matchIndustry = industryFilter === "全部" || customer.industry === industryFilter;
-    const matchKeyword = !searchKeyword || customer.name.includes(searchKeyword) || customer.contact.includes(searchKeyword);
-    return matchStatus && matchIndustry && matchKeyword;
+  const filteredData = followupsMock.filter((followup) => {
+    const matchType = typeFilter === "全部" || followup.type === typeFilter;
+    const matchCustomer = customerFilter === "全部" || followup.customerName === customerFilter;
+    const matchKeyword = !searchKeyword || followup.customerName.includes(searchKeyword) || followup.content.includes(searchKeyword);
+    return matchType && matchCustomer && matchKeyword;
   });
 
   const total = filteredData.length;
@@ -44,45 +52,17 @@ function CustomersPage() {
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">客户管理</h1>
-            <p className="text-sm text-muted-foreground">管理客户信息及跟进状态</p>
+            <h1 className="text-2xl font-semibold tracking-tight">销售跟进</h1>
+            <p className="text-sm text-muted-foreground">记录和查看客户跟进情况</p>
           </div>
           <Button>
             <Plus className="mr-1.5 h-4 w-4" />
-            新建客户
+            新建跟进
           </Button>
         </div>
       </div>
 
       <div className="container mx-auto px-6 py-6 space-y-4">
-        {/* Stats */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">客户总数</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">跟进中</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.filter((c) => c.status === "跟进中").length}</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">已成交</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.filter((c) => c.status === "成交").length}</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">本月新增</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.filter((c) => c.createdAt.startsWith("2026-03")).length}</p>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Filter Bar */}
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4">
@@ -90,39 +70,39 @@ function CustomersPage() {
               <div className="relative flex-1 min-w-[200px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索客户名称、联系人..."
+                  placeholder="搜索客户名称、跟进内容..."
                   className="pl-9"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                 />
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="状态筛选" />
+                  <SelectValue placeholder="方式筛选" />
                 </SelectTrigger>
                 <SelectContent>
-                  {statuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
+                  {types.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={industryFilter} onValueChange={setIndustryFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="行业筛选" />
+              <Select value={customerFilter} onValueChange={setCustomerFilter}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="客户筛选" />
                 </SelectTrigger>
                 <SelectContent>
-                  {industries.map((industry) => (
-                    <SelectItem key={industry} value={industry}>
-                      {industry}
+                  {customers.map((customer) => (
+                    <SelectItem key={customer} value={customer}>
+                      {customer}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => {
-                setStatusFilter("全部");
-                setIndustryFilter("全部");
+                setTypeFilter("全部");
+                setCustomerFilter("全部");
                 setSearchKeyword("");
                 setCurrentPage(1);
               }}>
@@ -136,7 +116,7 @@ function CustomersPage() {
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-base font-medium">
-              客户列表
+              跟进列表
               <span className="ml-2 text-sm font-normal text-muted-foreground">共 {total} 条</span>
             </CardTitle>
           </CardHeader>
@@ -144,34 +124,30 @@ function CustomersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>客户ID</TableHead>
-                  <TableHead>客户名称</TableHead>
-                  <TableHead>行业</TableHead>
-                  <TableHead>联系人</TableHead>
-                  <TableHead>电话</TableHead>
-                  <TableHead>等级</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>创建时间</TableHead>
+                  <TableHead>跟进ID</TableHead>
+                  <TableHead>客户</TableHead>
+                  <TableHead>关联商机</TableHead>
+                  <TableHead>方式</TableHead>
+                  <TableHead>跟进内容</TableHead>
+                  <TableHead>跟进人</TableHead>
+                  <TableHead>时间</TableHead>
                   <TableHead className="w-[50px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.map((customer) => (
-                  <TableRow key={customer.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell className="font-mono text-sm font-medium">{customer.id}</TableCell>
-                    <TableCell className="font-medium">{customer.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{customer.industry}</TableCell>
-                    <TableCell>{customer.contact}</TableCell>
-                    <TableCell>{customer.phone}</TableCell>
+                {paginatedData.map((followup) => (
+                  <TableRow key={followup.id} className="cursor-pointer hover:bg-muted/50">
+                    <TableCell className="font-mono text-sm font-medium">{followup.id}</TableCell>
+                    <TableCell className="font-medium">{followup.customerName}</TableCell>
+                    <TableCell className="text-muted-foreground">{followup.opportunityName || "-"}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{customer.scale}类</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={customer.status === "成交" ? "default" : customer.status === "跟进中" ? "secondary" : "outline"}>
-                        {customer.status}
+                      <Badge variant={typeColors[followup.type] || "outline"}>
+                        {followup.type}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{customer.createdAt}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">{followup.content}</TableCell>
+                    <TableCell>{followup.createdBy}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">{followup.createdAt}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

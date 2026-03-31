@@ -1,0 +1,300 @@
+{
+  "meta": {
+    "sourceMode": "dialog",
+    "specVersion": "inferred",
+    "specHash": "crm-b2b-sales-v1",
+    "generatedAt": "2026-03-31"
+  },
+  "globalRules": {
+    "dictionary": [
+      {
+        "key": "customer_level",
+        "label": "客户等级",
+        "options": [
+          { "value": "A", "label": "A类 - 重点客户" },
+          { "value": "B", "label": "B类 - 普通客户" },
+          { "value": "C", "label": "C类 - 潜在客户" }
+        ]
+      },
+      {
+        "key": "followup_type",
+        "label": "跟进方式",
+        "options": [
+          { "value": "拜访", "label": "拜访" },
+          { "value": "电话", "label": "电话" },
+          { "value": "会议", "label": "会议" },
+          { "value": "线上沟通", "label": "线上沟通" },
+          { "value": "其他", "label": "其他" }
+        ]
+      },
+      {
+        "key": "opportunity_stage",
+        "label": "商机阶段",
+        "options": [
+          { "value": "线索", "label": "线索" },
+          { "value": "需求确认", "label": "需求确认" },
+          { "value": "方案报价", "label": "方案报价" },
+          { "value": "合同谈判", "label": "合同谈判" },
+          { "value": "成交", "label": "成交" },
+          { "value": "失败", "label": "失败" }
+        ]
+      }
+    ],
+    "statusFlows": [
+      {
+        "key": "customer_status",
+        "label": "客户状态",
+        "statuses": [
+          { "value": "潜在", "label": "潜在客户", "color": "gray" },
+          { "value": "跟进中", "label": "跟进中", "color": "blue" },
+          { "value": "成交", "label": "已成交", "color": "green" },
+          { "value": "流失", "label": "已流失", "color": "red" }
+        ]
+      },
+      {
+        "key": "opportunity_stage",
+        "label": "商机阶段",
+        "statuses": [
+          { "value": "线索", "label": "线索", "color": "gray" },
+          { "value": "需求确认", "label": "需求确认", "color": "blue" },
+          { "value": "方案报价", "label": "方案报价", "color": "yellow" },
+          { "value": "合同谈判", "label": "合同谈判", "color": "purple" },
+          { "value": "成交", "label": "成交", "color": "green" },
+          { "value": "失败", "label": "失败", "color": "red" }
+        ]
+      }
+    ],
+    "roles": []
+  },
+  "sitemap": [
+    { "id": "dashboard", "label": "仪表盘", "path": "/", "icon": "LayoutDashboard" },
+    { "id": "customers", "label": "客户管理", "path": "/customers", "icon": "Users" },
+    { "id": "opportunities", "label": "商机管理", "path": "/opportunities", "icon": "TrendingUp" },
+    { "id": "followups", "label": "销售跟进", "path": "/followups", "icon": "MessageSquare" }
+  ],
+  "modules": [
+    {
+      "id": "customers",
+      "label": "客户管理",
+      "icon": "Users",
+      "inferred": true,
+      "typeDefinition": {
+        "fields": [
+          { "key": "id", "label": "客户ID", "type": "text", "required": true },
+          { "key": "name", "label": "客户名称", "type": "text", "required": true },
+          { "key": "industry", "label": "行业", "type": "text" },
+          { "key": "scale", "label": "企业规模", "type": "select", "optionSource": "dictionary", "optionKey": "customer_level" },
+          { "key": "contact", "label": "联系人", "type": "text" },
+          { "key": "phone", "label": "电话", "type": "phone" },
+          { "key": "email", "label": "邮箱", "type": "email" },
+          { "key": "address", "label": "地址", "type": "address" },
+          { "key": "status", "label": "状态", "type": "select", "optionSource": "dictionary", "optionKey": "customer_status" },
+          { "key": "createdAt", "label": "创建时间", "type": "datetime" },
+          { "key": "updatedAt", "label": "更新时间", "type": "datetime" }
+        ]
+      },
+      "pages": [
+        {
+          "path": "/customers",
+          "layout": "list",
+          "sections": [
+            {
+              "type": "statistic",
+              "fields": ["total", "active", "newThisMonth"]
+            },
+            {
+              "type": "table",
+              "fields": ["id", "name", "industry", "contact", "phone", "status", "createdAt"],
+              "filters": ["keyword", "status", "industry"],
+              "actions": ["view", "edit", "delete"]
+            }
+          ]
+        },
+        {
+          "path": "/customers/:id",
+          "layout": "detail",
+          "sections": [
+            {
+              "type": "description",
+              "fields": ["name", "industry", "scale", "contact", "phone", "email", "address", "status"]
+            },
+            {
+              "type": "tabs",
+              "fields": ["商机列表", "跟进记录"]
+            }
+          ]
+        },
+        {
+          "path": "/customers/new",
+          "layout": "form",
+          "sections": [
+            {
+              "type": "form",
+              "fieldGroups": [
+                { "label": "基本信息", "fields": ["name", "industry", "scale", "status"] },
+                { "label": "联系方式", "fields": ["contact", "phone", "email", "address"] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "opportunities",
+      "label": "商机管理",
+      "icon": "TrendingUp",
+      "inferred": true,
+      "typeDefinition": {
+        "fields": [
+          { "key": "id", "label": "商机ID", "type": "text", "required": true },
+          { "key": "name", "label": "商机名称", "type": "text", "required": true },
+          { "key": "customerId", "label": "客户", "type": "text", "required": true },
+          { "key": "amount", "label": "预估金额", "type": "money" },
+          { "key": "stage", "label": "商机阶段", "type": "select", "optionSource": "dictionary", "optionKey": "opportunity_stage" },
+          { "key": "expectedCloseDate", "label": "预计成交日期", "type": "date" },
+          { "key": "owner", "label": "负责人", "type": "text" },
+          { "key": "createdAt", "label": "创建时间", "type": "datetime" },
+          { "key": "updatedAt", "label": "更新时间", "type": "datetime" }
+        ]
+      },
+      "pages": [
+        {
+          "path": "/opportunities",
+          "layout": "list",
+          "sections": [
+            {
+              "type": "statistic",
+              "fields": ["total", "inProgress", "won", "totalAmount"]
+            },
+            {
+              "type": "table",
+              "fields": ["id", "name", "customerId", "amount", "stage", "expectedCloseDate", "owner"],
+              "filters": ["keyword", "stage", "owner"],
+              "actions": ["view", "edit", "delete"]
+            }
+          ]
+        },
+        {
+          "path": "/opportunities/:id",
+          "layout": "detail",
+          "sections": [
+            {
+              "type": "description",
+              "fields": ["name", "customerId", "amount", "stage", "expectedCloseDate", "owner", "createdAt"]
+            },
+            {
+              "type": "timeline",
+              "fields": ["跟进历史"]
+            }
+          ]
+        },
+        {
+          "path": "/opportunities/new",
+          "layout": "form",
+          "sections": [
+            {
+              "type": "form",
+              "fieldGroups": [
+                { "label": "基本信息", "fields": ["name", "customerId", "amount", "stage", "expectedCloseDate", "owner"] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "followups",
+      "label": "销售跟进",
+      "icon": "MessageSquare",
+      "inferred": true,
+      "typeDefinition": {
+        "fields": [
+          { "key": "id", "label": "跟进ID", "type": "text", "required": true },
+          { "key": "customerId", "label": "客户", "type": "text", "required": true },
+          { "key": "opportunityId", "label": "关联商机", "type": "text" },
+          { "key": "type", "label": "跟进方式", "type": "select", "optionSource": "dictionary", "optionKey": "followup_type" },
+          { "key": "content", "label": "跟进内容", "type": "textarea", "required": true },
+          { "key": "attendees", "label": "参与人", "type": "text" },
+          { "key": "nextStep", "label": "下次行动", "type": "textarea" },
+          { "key": "createdAt", "label": "跟进时间", "type": "datetime" },
+          { "key": "createdBy", "label": "跟进人", "type": "text" }
+        ]
+      },
+      "pages": [
+        {
+          "path": "/followups",
+          "layout": "list",
+          "sections": [
+            {
+              "type": "table",
+              "fields": ["id", "customerId", "type", "content", "createdAt", "createdBy"],
+              "filters": ["keyword", "type", "customerId", "dateRange"],
+              "actions": ["view"]
+            }
+          ]
+        },
+        {
+          "path": "/followups/:id",
+          "layout": "detail",
+          "sections": [
+            {
+              "type": "description",
+              "fields": ["customerId", "opportunityId", "type", "attendees", "nextStep", "createdAt", "createdBy"]
+            },
+            {
+              "type": "card",
+              "fields": ["content"]
+            }
+          ]
+        },
+        {
+          "path": "/followups/new",
+          "layout": "form",
+          "sections": [
+            {
+              "type": "form",
+              "fieldGroups": [
+                { "label": "基本信息", "fields": ["customerId", "opportunityId", "type", "attendees"] },
+                { "label": "跟进内容", "fields": ["content", "nextStep"] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "dashboard": {
+    "stats": [
+      { "key": "totalCustomers", "label": "客户总数", "trend": "up", "change": "+12%" },
+      { "key": "activeOpportunities", "label": "活跃商机", "trend": "up", "change": "+8%" },
+      { "key": "monthlyRevenue", "label": "本月成交", "trend": "down", "change": "-5%" },
+      { "key": "conversionRate", "label": "转化率", "trend": "up", "change": "+3%" }
+    ],
+    "charts": [
+      {
+        "key": "opportunityStage",
+        "label": "商机阶段分布",
+        "type": "pie"
+      },
+      {
+        "key": "monthlyTrend",
+        "label": "月度趋势",
+        "type": "line"
+      }
+    ],
+    "recentRecords": [
+      {
+        "key": "recentFollowups",
+        "label": "最近跟进",
+        "module": "followups",
+        "limit": 5
+      },
+      {
+        "key": "recentOpportunities",
+        "label": "最新商机",
+        "module": "opportunities",
+        "limit": 5
+      }
+    ]
+  }
+}

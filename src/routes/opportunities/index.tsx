@@ -10,33 +10,50 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { customersMock } from "@/mock/customers";
+import { opportunitiesMock } from "@/mock/opportunities";
 
 const PAGE_SIZE = 10;
 
-export const Route = createFileRoute("/customers/")({
-  component: CustomersPage,
+const stageColors: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
+  "成交": "default",
+  "合同谈判": "secondary",
+  "方案报价": "outline",
+  "需求确认": "outline",
+  "线索": "outline",
+  "失败": "destructive",
+};
+
+export const Route = createFileRoute("/opportunities/")({
+  component: OpportunitiesPage,
 });
 
-function CustomersPage() {
-  const [statusFilter, setStatusFilter] = useState<string>("全部");
-  const [industryFilter, setIndustryFilter] = useState<string>("全部");
+function OpportunitiesPage() {
+  const [stageFilter, setStageFilter] = useState<string>("全部");
+  const [ownerFilter, setOwnerFilter] = useState<string>("全部");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const industries = ["全部", ...Array.from(new Set(customersMock.map((c) => c.industry)))];
-  const statuses = ["全部", "潜在", "跟进中", "成交", "流失"];
+  const owners = ["全部", ...Array.from(new Set(opportunitiesMock.map((o) => o.owner)))];
+  const stages = ["全部", "线索", "需求确认", "方案报价", "合同谈判", "成交", "失败"];
 
-  const filteredData = customersMock.filter((customer) => {
-    const matchStatus = statusFilter === "全部" || customer.status === statusFilter;
-    const matchIndustry = industryFilter === "全部" || customer.industry === industryFilter;
-    const matchKeyword = !searchKeyword || customer.name.includes(searchKeyword) || customer.contact.includes(searchKeyword);
-    return matchStatus && matchIndustry && matchKeyword;
+  const filteredData = opportunitiesMock.filter((opp) => {
+    const matchStage = stageFilter === "全部" || opp.stage === stageFilter;
+    const matchOwner = ownerFilter === "全部" || opp.owner === ownerFilter;
+    const matchKeyword = !searchKeyword || opp.name.includes(searchKeyword) || opp.customerName.includes(searchKeyword);
+    return matchStage && matchOwner && matchKeyword;
   });
 
   const total = filteredData.length;
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const paginatedData = filteredData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const totalAmount = filteredData.reduce((sum, o) => sum + o.amount, 0);
+
+  const formatMoney = (amount: number) => {
+    if (amount >= 10000) {
+      return `¥${(amount / 10000).toFixed(1)}万`;
+    }
+    return `¥${amount.toLocaleString()}`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,12 +61,12 @@ function CustomersPage() {
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">客户管理</h1>
-            <p className="text-sm text-muted-foreground">管理客户信息及跟进状态</p>
+            <h1 className="text-2xl font-semibold tracking-tight">商机管理</h1>
+            <p className="text-sm text-muted-foreground">管理销售商机及跟进状态</p>
           </div>
           <Button>
             <Plus className="mr-1.5 h-4 w-4" />
-            新建客户
+            新建商机
           </Button>
         </div>
       </div>
@@ -59,26 +76,26 @@ function CustomersPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">客户总数</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.length}</p>
+              <p className="text-sm font-medium text-muted-foreground">商机总数</p>
+              <p className="mt-1 text-2xl font-bold">{opportunitiesMock.length}</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">跟进中</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.filter((c) => c.status === "跟进中").length}</p>
+              <p className="text-sm font-medium text-muted-foreground">进行中</p>
+              <p className="mt-1 text-2xl font-bold">{opportunitiesMock.filter((o) => !["成交", "失败"].includes(o.stage)).length}</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-5">
               <p className="text-sm font-medium text-muted-foreground">已成交</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.filter((c) => c.status === "成交").length}</p>
+              <p className="mt-1 text-2xl font-bold">{opportunitiesMock.filter((o) => o.stage === "成交").length}</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-5">
-              <p className="text-sm font-medium text-muted-foreground">本月新增</p>
-              <p className="mt-1 text-2xl font-bold">{customersMock.filter((c) => c.createdAt.startsWith("2026-03")).length}</p>
+              <p className="text-sm font-medium text-muted-foreground">商机总额</p>
+              <p className="mt-1 text-2xl font-bold">{formatMoney(totalAmount)}</p>
             </CardContent>
           </Card>
         </div>
@@ -90,39 +107,39 @@ function CustomersPage() {
               <div className="relative flex-1 min-w-[200px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索客户名称、联系人..."
+                  placeholder="搜索商机名称、客户..."
                   className="pl-9"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                 />
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={stageFilter} onValueChange={setStageFilter}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="状态筛选" />
+                  <SelectValue placeholder="阶段筛选" />
                 </SelectTrigger>
                 <SelectContent>
-                  {statuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
+                  {stages.map((stage) => (
+                    <SelectItem key={stage} value={stage}>
+                      {stage}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={industryFilter} onValueChange={setIndustryFilter}>
+              <Select value={ownerFilter} onValueChange={setOwnerFilter}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="行业筛选" />
+                  <SelectValue placeholder="负责人" />
                 </SelectTrigger>
                 <SelectContent>
-                  {industries.map((industry) => (
-                    <SelectItem key={industry} value={industry}>
-                      {industry}
+                  {owners.map((owner) => (
+                    <SelectItem key={owner} value={owner}>
+                      {owner}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => {
-                setStatusFilter("全部");
-                setIndustryFilter("全部");
+                setStageFilter("全部");
+                setOwnerFilter("全部");
                 setSearchKeyword("");
                 setCurrentPage(1);
               }}>
@@ -136,7 +153,7 @@ function CustomersPage() {
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-base font-medium">
-              客户列表
+              商机列表
               <span className="ml-2 text-sm font-normal text-muted-foreground">共 {total} 条</span>
             </CardTitle>
           </CardHeader>
@@ -144,34 +161,30 @@ function CustomersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>客户ID</TableHead>
-                  <TableHead>客户名称</TableHead>
-                  <TableHead>行业</TableHead>
-                  <TableHead>联系人</TableHead>
-                  <TableHead>电话</TableHead>
-                  <TableHead>等级</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>创建时间</TableHead>
+                  <TableHead>商机ID</TableHead>
+                  <TableHead>商机名称</TableHead>
+                  <TableHead>客户</TableHead>
+                  <TableHead className="text-right">预估金额</TableHead>
+                  <TableHead>阶段</TableHead>
+                  <TableHead>预计成交</TableHead>
+                  <TableHead>负责人</TableHead>
                   <TableHead className="w-[50px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.map((customer) => (
-                  <TableRow key={customer.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell className="font-mono text-sm font-medium">{customer.id}</TableCell>
-                    <TableCell className="font-medium">{customer.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{customer.industry}</TableCell>
-                    <TableCell>{customer.contact}</TableCell>
-                    <TableCell>{customer.phone}</TableCell>
+                {paginatedData.map((opp) => (
+                  <TableRow key={opp.id} className="cursor-pointer hover:bg-muted/50">
+                    <TableCell className="font-mono text-sm font-medium">{opp.id}</TableCell>
+                    <TableCell className="font-medium">{opp.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{opp.customerName}</TableCell>
+                    <TableCell className="text-right font-medium">{formatMoney(opp.amount)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{customer.scale}类</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={customer.status === "成交" ? "default" : customer.status === "跟进中" ? "secondary" : "outline"}>
-                        {customer.status}
+                      <Badge variant={stageColors[opp.stage] || "outline"}>
+                        {opp.stage}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{customer.createdAt}</TableCell>
+                    <TableCell className="text-muted-foreground">{opp.expectedCloseDate}</TableCell>
+                    <TableCell>{opp.owner}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
