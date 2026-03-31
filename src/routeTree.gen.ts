@@ -9,14 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Crm_rootRouteImport } from './routes/crm/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PreviewIndexRouteImport } from './routes/preview/index'
 import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities/index'
 import { Route as FollowupsIndexRouteImport } from './routes/followups/index'
 import { Route as CustomersIndexRouteImport } from './routes/customers/index'
+import { Route as CrmIndexRouteImport } from './routes/crm/index'
 import { Route as PreviewListPageRouteImport } from './routes/preview/list-page'
 import { Route as PreviewDashboardRouteImport } from './routes/preview/dashboard'
+import { Route as CrmQuotesIndexRouteImport } from './routes/crm/quotes/index'
+import { Route as CrmOpportunitiesIndexRouteImport } from './routes/crm/opportunities/index'
+import { Route as CrmFollowupsIndexRouteImport } from './routes/crm/followups/index'
+import { Route as CrmCustomersIndexRouteImport } from './routes/crm/customers/index'
 
+const Crm_rootRoute = Crm_rootRouteImport.update({
+  id: '/crm/__root',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -42,6 +52,11 @@ const CustomersIndexRoute = CustomersIndexRouteImport.update({
   path: '/customers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmIndexRoute = CrmIndexRouteImport.update({
+  id: '/crm/',
+  path: '/crm/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PreviewListPageRoute = PreviewListPageRouteImport.update({
   id: '/preview/list-page',
   path: '/preview/list-page',
@@ -52,77 +67,144 @@ const PreviewDashboardRoute = PreviewDashboardRouteImport.update({
   path: '/preview/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmQuotesIndexRoute = CrmQuotesIndexRouteImport.update({
+  id: '/crm/quotes/',
+  path: '/crm/quotes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmOpportunitiesIndexRoute = CrmOpportunitiesIndexRouteImport.update({
+  id: '/crm/opportunities/',
+  path: '/crm/opportunities/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmFollowupsIndexRoute = CrmFollowupsIndexRouteImport.update({
+  id: '/crm/followups/',
+  path: '/crm/followups/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmCustomersIndexRoute = CrmCustomersIndexRouteImport.update({
+  id: '/crm/customers/',
+  path: '/crm/customers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/crm': typeof Crm_rootRoute
   '/preview/dashboard': typeof PreviewDashboardRoute
   '/preview/list-page': typeof PreviewListPageRoute
+  '/crm/': typeof CrmIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/followups/': typeof FollowupsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/preview/': typeof PreviewIndexRoute
+  '/crm/customers/': typeof CrmCustomersIndexRoute
+  '/crm/followups/': typeof CrmFollowupsIndexRoute
+  '/crm/opportunities/': typeof CrmOpportunitiesIndexRoute
+  '/crm/quotes/': typeof CrmQuotesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/crm': typeof CrmIndexRoute
   '/preview/dashboard': typeof PreviewDashboardRoute
   '/preview/list-page': typeof PreviewListPageRoute
   '/customers': typeof CustomersIndexRoute
   '/followups': typeof FollowupsIndexRoute
   '/opportunities': typeof OpportunitiesIndexRoute
   '/preview': typeof PreviewIndexRoute
+  '/crm/customers': typeof CrmCustomersIndexRoute
+  '/crm/followups': typeof CrmFollowupsIndexRoute
+  '/crm/opportunities': typeof CrmOpportunitiesIndexRoute
+  '/crm/quotes': typeof CrmQuotesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/crm/__root': typeof Crm_rootRoute
   '/preview/dashboard': typeof PreviewDashboardRoute
   '/preview/list-page': typeof PreviewListPageRoute
+  '/crm/': typeof CrmIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/followups/': typeof FollowupsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/preview/': typeof PreviewIndexRoute
+  '/crm/customers/': typeof CrmCustomersIndexRoute
+  '/crm/followups/': typeof CrmFollowupsIndexRoute
+  '/crm/opportunities/': typeof CrmOpportunitiesIndexRoute
+  '/crm/quotes/': typeof CrmQuotesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/crm'
     | '/preview/dashboard'
     | '/preview/list-page'
+    | '/crm/'
     | '/customers/'
     | '/followups/'
     | '/opportunities/'
     | '/preview/'
+    | '/crm/customers/'
+    | '/crm/followups/'
+    | '/crm/opportunities/'
+    | '/crm/quotes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/crm'
     | '/preview/dashboard'
     | '/preview/list-page'
     | '/customers'
     | '/followups'
     | '/opportunities'
     | '/preview'
+    | '/crm/customers'
+    | '/crm/followups'
+    | '/crm/opportunities'
+    | '/crm/quotes'
   id:
     | '__root__'
     | '/'
+    | '/crm/__root'
     | '/preview/dashboard'
     | '/preview/list-page'
+    | '/crm/'
     | '/customers/'
     | '/followups/'
     | '/opportunities/'
     | '/preview/'
+    | '/crm/customers/'
+    | '/crm/followups/'
+    | '/crm/opportunities/'
+    | '/crm/quotes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  Crm_rootRoute: typeof Crm_rootRoute
   PreviewDashboardRoute: typeof PreviewDashboardRoute
   PreviewListPageRoute: typeof PreviewListPageRoute
+  CrmIndexRoute: typeof CrmIndexRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
   FollowupsIndexRoute: typeof FollowupsIndexRoute
   OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
   PreviewIndexRoute: typeof PreviewIndexRoute
+  CrmCustomersIndexRoute: typeof CrmCustomersIndexRoute
+  CrmFollowupsIndexRoute: typeof CrmFollowupsIndexRoute
+  CrmOpportunitiesIndexRoute: typeof CrmOpportunitiesIndexRoute
+  CrmQuotesIndexRoute: typeof CrmQuotesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/crm/__root': {
+      id: '/crm/__root'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof Crm_rootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -158,6 +240,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crm/': {
+      id: '/crm/'
+      path: '/crm'
+      fullPath: '/crm/'
+      preLoaderRoute: typeof CrmIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/preview/list-page': {
       id: '/preview/list-page'
       path: '/preview/list-page'
@@ -172,17 +261,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreviewDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crm/quotes/': {
+      id: '/crm/quotes/'
+      path: '/crm/quotes'
+      fullPath: '/crm/quotes/'
+      preLoaderRoute: typeof CrmQuotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm/opportunities/': {
+      id: '/crm/opportunities/'
+      path: '/crm/opportunities'
+      fullPath: '/crm/opportunities/'
+      preLoaderRoute: typeof CrmOpportunitiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm/followups/': {
+      id: '/crm/followups/'
+      path: '/crm/followups'
+      fullPath: '/crm/followups/'
+      preLoaderRoute: typeof CrmFollowupsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm/customers/': {
+      id: '/crm/customers/'
+      path: '/crm/customers'
+      fullPath: '/crm/customers/'
+      preLoaderRoute: typeof CrmCustomersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  Crm_rootRoute: Crm_rootRoute,
   PreviewDashboardRoute: PreviewDashboardRoute,
   PreviewListPageRoute: PreviewListPageRoute,
+  CrmIndexRoute: CrmIndexRoute,
   CustomersIndexRoute: CustomersIndexRoute,
   FollowupsIndexRoute: FollowupsIndexRoute,
   OpportunitiesIndexRoute: OpportunitiesIndexRoute,
   PreviewIndexRoute: PreviewIndexRoute,
+  CrmCustomersIndexRoute: CrmCustomersIndexRoute,
+  CrmFollowupsIndexRoute: CrmFollowupsIndexRoute,
+  CrmOpportunitiesIndexRoute: CrmOpportunitiesIndexRoute,
+  CrmQuotesIndexRoute: CrmQuotesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
